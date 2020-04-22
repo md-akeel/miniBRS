@@ -34,6 +34,12 @@ class ServiceNowToPostgresqlTransferOperator(ServiceNowToGenericTransferOperator
             password = credentials_postgres.password
             host = credentials_postgres.host
             database_name = credentials_postgres.schema
+            port = credentials_postgres.port
+
+            if not port:  # If port is empty,set default port number
+                port = 5432
+            LoggingMixin().log.warning(f'PORT NUMBER : {port}')
+
         except AirflowException:
             raise PostgreSQLConnectionNotFoundException()
 
@@ -47,7 +53,7 @@ class ServiceNowToPostgresqlTransferOperator(ServiceNowToGenericTransferOperator
 
         # store the data in the database
         cols = list(next(n_objects).keys())
-        storage = Storage(login, password, host, database_name, table_name)
+        storage = Storage(login, password, host, database_name, table_name, port)
         storage.create_table(cols)
         storage.insert_data(n_objects, cols)
 
@@ -102,20 +108,21 @@ class Storage():
     This class takes the Postgresql credentials and creates a connection with Postgresql database
     """
 
-    def __init__(self, login, password, host, database_name, table_name):  # pylint: disable=too-many-arguments
+    def __init__(self, login, password, host, database_name, table_name,port):  # pylint: disable=too-many-arguments
         self.login = login
         self.password = password
         self.host = host
         self.database_name = database_name
         self.table_name = table_name
+        self.port=port
 
     def create_table(self, column_names):
         """
         This method creates the table in the database(database name is specified in the parameter
         self.database_name )
         """
-        conn = pg.connect(host=self.host, port=5432, user=self.login, password=self.password,
-                          database=self.database_name)
+        conn = pg.connect(host=self.host, port=self.port, user=self.login, password=self.password,
+                         database=self.database_name)
         cursor = conn.cursor()
         column_names = ','.join(col_name + " CHAR(100)" for col_name in column_names)
         sql = 'CREATE TABLE IF NOT EXISTS {} ({})'.format(self.table_name, column_names)
