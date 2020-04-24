@@ -1,15 +1,13 @@
-#Hooks & Operators
-The current version of mini-BRS contains Hooks and Operators designed for the ServiceNow platform. Following Operators and Hooks
-are the part of current release and in future various other operators and hooks will be released to support cloud platforms.
+# Hooks & Operators
+The current version of mini-BRS contains Hooks and Operators designed for the ServiceNow platform. Following Operators and Hooks are the part of current release and in future various other operators and hooks will be released to support cloud platforms.
 
-##Hook's
-   Hooks are interfaces to external platforms and databases. Hooks implement a common interface when possible,
-   and act as a building block for operators. They also use the `airflow.models.connection.Connection` model 
-   to retrieve hostnames and authentication information. Hooks keep authentication code and information out 
-   of pipelines, centralized in the metadata database.The current version of miniBRS provides a `servicenow_hook`.
+## Hook's
+Hooks are interfaces to external platforms and databases. Hooks implement a common interface when possible,
+and act as a building block for operators. They also use the `airflow.models.connection.Connection` model 
+to retrieve hostnames and authentication information. Hooks keep authentication code and information out 
+of pipelines, centralized in the metadata database. miniBRS provides definition of `servicenow_hook`.
    
-*  servicenow_hook
-   Use the `servicenow_hook` to interact with the `ServiceNow`.
+*  **servicenow_hook:** This hook provides you a rich API to interact with a Service Now instance. Use the `servicenow_hook`      to get data or count records of the tables in the `ServiceNow` instance.
    
    **plugins/mbrs/servicenow_hook.py**
 ```
@@ -20,16 +18,13 @@ are the part of current release and in future various other operators and hooks 
 ```
 
 
-##Operator's
+## Operator's
 
 1. **servicenow_to_sftp_transfer_operator :**
-###Database Operators
-   
-   The `Database Operators` transfers the data from `ServiceNow` to a database. The current version of miniBRS supports three
-   database operators. These are `ServiceNowToMYSQLTransferOperator`, 
-   `ServiceNowToMSSQLTransferOperator` and `ServiceNowToPostgresqlTransferOperator`.
-   
-   Use the  `ServiceNowToMYSQLTransferOperator` to transfer data to the MySql database.
+### Database Operators
+The `Database Operators` transfers the data from `ServiceNow` to a database. The current version of miniBRS supports three database operators. These are `ServiceNowToMYSQLTransferOperator`, `ServiceNowToMSSQLTransferOperator` and `ServiceNowToPostgresqlTransferOperator`. 
+
+Use the  `ServiceNowToMYSQLTransferOperator` to transfer data to the MySql database.
 
 **plugins/mbrs/operators/servicenow_to_mysql_transfer_operator.py** 
 ```
@@ -56,6 +51,7 @@ task = ServiceNowToMYSQLTransferOperator(task_id = 'your_task_id',
    * `execution_date`: It contains the execution date for the task with id `task_id`.
 
 Similarly `ServiceNowToMSSQLTransferOperator`  and `ServiceNowToPostgresqlTransferOperator` takes the following form:
+
 
 `ServiceNowToMSSQLTransferOperator:`
 **plugins/mbrs/operators/servicenow_to_mssql_transfer_operator.py**
@@ -87,12 +83,10 @@ task = ServiceNowToPostgresqlTransferOperator(task_id = 'send_data_to_submission
    
 ```
 
-###Cloud Operators
-    
-   The `Cloud Operators` transfers the data from `ServiceNow` to a `Cloud storage`. The current version of miniBRS supports two cloud operators. 
-   These are `ServiceNowToS3TransferOperator` and `ServiceNowToDropboxTransferOperator`.
+### Cloud Operators
+The `Cloud Operators` transfers the data from `ServiceNow` to a `Cloud storage`. The current version of miniBRS supports two cloud operators. These are `ServiceNowToS3TransferOperator` and `ServiceNowToDropboxTransferOperator`. 
 
-   Use the  `ServiceNowToS3TransferOperator` to transfer data to the `S3` cloud storage.
+Use the `ServiceNowToS3TransferOperator` to transfer data to the `S3` cloud storage.
 
 **plugins/mbrs/operators/servicenow_to_s3_transfer_operator.py**
 ```
@@ -135,7 +129,7 @@ execution_date = dag.params.get('execution_date')
    
 ```
 
-###Network Operators
+### Network Operators
    The `Network Operators` transfers the data from the `ServiceNow` to a place where we have defined the storage.
    The current version of miniBRS supports only `ServiceNowToSFTPTransferOperator`.
    
